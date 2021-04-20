@@ -46,4 +46,74 @@ The testing infrastructure should be able to use your `GameOfLifeSim` to test yo
 * You will probably want to make more tests or at least better understand the ones provided. Inside `LifeTestData` (inside `GameOfLifeTester.scala`) we provide some sample inputs and outputs. We also provide the code to load that particular string format into a grid. When developing, you may also want to use the `testOnly` feature to execute a single test.
 
 
-# Problem 2 - Crypto Hash (to be posted Monday)
+# Problem 2 - ChaCha20 Block Function (50pts)
+Last homework we built an `XORCipher` that allowed us to encrypt our memory by XORing a secret key and our message. For this assigment we will focus on the key generation process by implementing the stream cipher [ChaCha20](https://en.wikipedia.org/wiki/Salsa20#ChaCha_variant). 
+
+### Motivation
+> * There is plenty of hardware support for the more popular AES cipher but less for ChaCha. We have the opportunity to practice Chisel while contributing something new!
+> * For the security of our `XORCipher` we require as many unique secret keys as messages which is cumbersome to communicate. A stream cipher generates a keystream (i.e MBs) from a lightweight seed (i.e 256b), greately reducing storage and communication requirements.
+
+### ChaCha20 [Specs](https://tools.ietf.org/html/draft-irtf-cfrg-chacha20-poly1305-01#section-2.1)
+At a high level, we apply many rounds of 32b additions, XORs, and bit shifts to scramble our secret key, producing a 512b block of random bits. The contiguous stream of blocks is called the keystream. Given a keystream it is intractable to recover the original secret key even though the scrambling function is known. Since these operations are deterministic, knowledge of the secret key allows one to reproduce the keystream (i.e to decrypt).
+
+We start with 512 bits which can be split into 16 x 32b `UInt`s called a `block`.  For visualization we can arrange this in a 4x4 matrix. The algorithm will operate on 4 of the 16 cells at a time. The block is composed of four pieces: 
+> * key = 256b - the secret input to generate the keystream.
+> * nonce = 96b - "number only used once" per key and per block (for the curious [here](https://en.wikipedia.org/wiki/Initialization_vector)).
+> * blockCnt = 32b - The index of the current block, by convention tied to a 32b counter. This means for a given key there will be $2^{32}$ possible blocks in our keystream. Since the `blockCnt` is incrementing we can use it index which block we are on. This let's you quickly compute a block at any point in the keystream without needing to compute previous blocks, which is not true for all stream ciphers.
+> * const = 128b - These bits are embedded directly into the starting block, and were chosen by the cipher designer to provide initial entropy.
+![Alt text](images/chachaBlock.png?raw=true "ChaCha Block")
+
+Note that we will be using the most recent ChaCha20 specs where the `BlockCnt` is 32b instead of 64b and the `nonce` is 96b instead of 32b (which is what Wiki shows). 
+
+### Operations
+We scramble our block by iteratively applying a _quarter round_ function. `QR(a, b, c, d)` takes four 32b `UInt`s and performs the following operations:
+> ```
+>  a += b; d ^= a; d <<<= 16;
+>  c += d; b ^= c; b <<<= 12;
+>  a += b; d ^= a; d <<<= 8;
+>  c += d; b ^= c; b <<<= 7;
+> ```
+Note the `<<<=` notation means _rotate left_, which is a left bit-shift where any overflow bits are shifted into the LSBs. (i.e `0b1100 <<< 1 = 0b1001`). The `ROTL` function is provided in the `ChaChaModel` object as a guide. Visually this is what is happening (src [wiki](https://en.wikipedia.org/wiki/Salsa20#/media/File:ChaCha_Cipher_Quarter_Round_Function.svg)): 
+> ![Alt text](images/Round.png "ChaCha Block")
+
+To generate a block, we will apply `QR` a total of `80` times (10 rounds of 4 column and 4 diagonal QRs) and then add the result with our original block. For each round, we instantiate `QR(a,b,c,d)` 4 times (in one cycle), with the difference being which data is used for `a,b,c,d`. The highlighted squares in the figure below show which data is used when. The complete ChaCha keystream generation process is shown here:
+
+> ![Alt text](images/ChaCha.png "ChaCha Block")
+
+### What is provided
+- `src/main/scala/hw3/ChaCha.Scala`
+    * `ChaChaModel` - contains a fully implemented ChaCha Scala model.
+    * `ChaChaIn` - useful interface for testing.
+    * `ChaCha` - the companion object for our unimplemented `ChaCha` chisel module. This object contains some helper methods as well as unimplemented `ROTL` and `QR` methods.
+    * `Packet` - A helper bundle that will be part of our module's input.
+    * `ChaChaIO` - The interface to our module.
+- `src/main/scala/hw3/ChaChaTestSuite.Scala`
+    * `ChaChaModelBehavior` - The test suite for the Scala model. 
+    * `ChaChaModelTester` - The scalatest wrapper for the Scala model.
+    * `ChaChaBehavior` - The test suite for the Chisel model. If your code passes these tests you can feel confident your ChaCha implementation is correct.
+    * `ChaChaTester` - The scalatest wrapper for the Chisel model.
+
+### Deliverables
+* Implement `ChaCha.ROTL`, `ChaCha.QR`, and the `ChaCha` module using the provided Scala model and tests as a guide.
+* The `ChaCha` module will have the following behavior (as demonstrated in the provided tester):
+    * The module will hold on to the last valid input received. If a new valid input is received, the module will reset and hold onto that. When the input's valid signal goes low, the rounds will begin.
+    * We have data-level parallism when performing the column rounds or the diagonal rounds. We will exploit this parallelism and complete either all four column or all four diagonal rounds each cycle for a total of `20` cycles: 
+    >  ```
+    >  // Cycle 0
+    >  QR(0, 4,  8, 12)	// 1st column
+    >  QR(1, 5,  9, 13)	// 2nd column
+    >  QR(2, 6, 10, 14)	// 3rd column
+    >  QR(3, 7, 11, 15)	// 4th column
+    >  // Cycle 1
+    >  QR(0, 5, 10, 15)	// diagonal 1 (main diagonal)
+    >  QR(1, 6, 11, 12)	// diagonal 2
+    >  QR(2, 7,  8, 13)	// diagonal 3
+    >  QR(3, 4,  9, 14)	// diagonal 4
+    >  ```
+
+### Tips
+* Ensure your `ROTL` is correct before considering testing `QR`.
+* You must save a copy to your original inputs to add with the final output of the round functions.
+* All arithmetic is 32b, so make sure you're wrapping/truncating appropriately.
+* A fun [Computerphile video](https://www.youtube.com/watch?v=UeIpq-C-GSA) explaining ChaCha.
+
