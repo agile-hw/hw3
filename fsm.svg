@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xl="http://www.w3.org/1999/xlink" viewBox="4735.55 5942.7845 295.54375 413.96553" width="295.54375" height="413.96553">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" xmlns:xl="http://www.w3.org/1999/xlink" viewBox="4735.55 5942.7845 295.54375 413.96553" width="295.54375" height="413.96553">
   <defs>
     <font-face font-family="Menlo" font-size="12" panose-1="2 11 6 9 3 8 4 2 2 4" units-per-em="1000" underline-position="-63.47656" underline-thickness="43.94531" slope="0" x-height="546.875" cap-height="729.0039" ascent="928.2227" descent="-235.83984" font-weight="400">
       <font-face-src>
@@ -18,8 +18,8 @@
       </g>
     </marker>
   </defs>
-  <metadata> Produced by OmniGraffle 7.19.4\n2022-01-28 05:46:07 +0000</metadata>
-  <g id="hw3_-_fsm" stroke="none" stroke-opacity="1" stroke-dasharray="none" fill="none" fill-opacity="1">
+  <metadata> Produced by OmniGraffle 7.19.4\n2022-01-28 23:45:42 +0000</metadata>
+  <g id="hw3_-_fsm" stroke-opacity="1" stroke-dasharray="none" fill-opacity="1" stroke="none" fill="none">
     <title>hw3 - fsm</title>
     <g id="hw3_-_fsm_Layer_1">
       <title>Layer 1</title>
@@ -97,11 +97,6 @@
           <tspan font-family="Menlo" font-size="12" font-weight="400" fill="#284491" x="0" y="11">load &amp; key.valid</tspan>
         </text>
       </g>
-      <g id="Graphic_48">
-        <text transform="translate(4864.174 6131.75)" fill="#284491">
-          <tspan font-family="Menlo" font-size="12" font-weight="400" fill="#284491" x="0" y="11">load</tspan>
-        </text>
-      </g>
       <g id="Graphic_49">
         <text transform="translate(4797 6225.4385) rotate(90)" fill="#284491">
           <tspan font-family="Menlo" font-size="12" font-weight="400" fill="#284491" x="0" y="11">read</tspan>
@@ -110,6 +105,11 @@
       <g id="Graphic_50">
         <text transform="translate(4760.877 6083.5)" fill="#284491">
           <tspan font-family="Menlo" font-size="12" font-weight="400" fill="#284491" x="0" y="11">clear</tspan>
+        </text>
+      </g>
+      <g id="Graphic_51">
+        <text transform="translate(4821 6126.5)" fill="#284491">
+          <tspan font-family="Menlo" font-size="12" font-weight="400" fill="#284491" x="0" y="11">load &amp; key.valid</tspan>
         </text>
       </g>
     </g>
