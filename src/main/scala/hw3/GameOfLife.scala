@@ -10,7 +10,6 @@ class GameOfLifeIO(nRows: Int, nCols: Int) extends Bundle {
     val step = Input(Bool())
     val gridIn = Input(Vec(nRows, Vec(nCols, Bool())))
     val gridOut = Output(Vec(nRows, Vec(nCols, Bool())))
-    override def cloneType = (new GameOfLifeIO(nRows, nCols)).asInstanceOf[this.type]
 }
 
 class GameOfLife(val nRows: Int, val nCols: Int, val rules: GameRules) extends Module {
@@ -25,4 +24,5 @@ class GameOfLife(val nRows: Int, val nCols: Int, val rules: GameRules) extends M
     }
 
     // YOUR CODE HERE
+
 }

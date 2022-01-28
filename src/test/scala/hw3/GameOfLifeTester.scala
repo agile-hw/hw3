@@ -1,10 +1,7 @@
 package hw3
 
-import chisel3._
-import chisel3.tester._
-import chisel3.tester.RawTester.test
-
-import org.scalatest.FreeSpec
+import chiseltest._
+import org.scalatest.flatspec.AnyFlatSpec
 
 
 object LifeTestData {
@@ -39,27 +36,28 @@ object LifeTestData {
     
 }
 
-
-class GameOfLifeTester extends FreeSpec with ChiselScalatestTester {
-    "GameOfLifeSim should be able to execute basic" in {
+class GameOfLifeTester extends AnyFlatSpec with ChiselScalatestTester {
+    behavior of "GameOfLifeSim"
+    it should "execute basic" in {
         val lg = new GameOfLifeSim(Grid(LifeTestData.basic_0),
-                              LifeTestData.standardRules)
+            LifeTestData.standardRules)
         println(lg)
-        for (t <- 0  until 5) {
+        for (t <- 0 until 5) {
             lg.evolve()
             println(lg)
         }
         assert(lg.g.cells == Grid(LifeTestData.basic_5).cells)
     }
 
-    "GameOfLife be able to load basic" in {
+    behavior of "GameOfLife"
+    it should "load basic" in {
         test(new GameOfLife(3, 3, LifeTestData.standardRules)) { c =>
             val coSim = GameOfLifeTestingCoSim(c, LifeTestData.basic_0)
             coSim.loadDUT()
         }
     }
 
-    "GameOfLife should take a few steps on triangle" in {
+    it should "take a few steps on triangle" in {
         test(new GameOfLife(3, 3, LifeTestData.standardRules)) { c =>
             val coSim = GameOfLifeTestingCoSim(c, LifeTestData.triangle)
             coSim.loadDUT()
@@ -67,7 +65,7 @@ class GameOfLifeTester extends FreeSpec with ChiselScalatestTester {
         }
     }
 
-    "GameOfLife should to execute glider" in {
+    it should "execute glider" in {
         test(new GameOfLife(5, 5, LifeTestData.standardRules)) { c =>
             val coSim = GameOfLifeTestingCoSim(c, LifeTestData.glider)
             coSim.loadDUT()

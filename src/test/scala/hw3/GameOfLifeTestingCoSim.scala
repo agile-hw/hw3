@@ -1,11 +1,10 @@
 package hw3
 
 import chisel3._
-import chisel3.tester._
-import chisel3.tester.RawTester.test
+import chiseltest._
 
 class GameOfLifeTestingCoSim(sim: GameOfLifeSim, dut: GameOfLife) {
-    def loadDUT() {
+    def loadDUT():Unit = {
         dut.io.load.poke(true.B)
         dut.io.step.poke(false.B)
         for (r <- 0 until dut.nRows) {
@@ -18,7 +17,7 @@ class GameOfLifeTestingCoSim(sim: GameOfLifeSim, dut: GameOfLife) {
         checkGridOutput()
     }
 
-    def printGridOutput() {
+    def printGridOutput():Unit = {
         val gridToPrint = new Grid(dut.nRows, dut.nCols)
         for (r <- 0 until dut.nRows) {
             for (c <- 0 until dut.nCols) {
@@ -28,7 +27,7 @@ class GameOfLifeTestingCoSim(sim: GameOfLifeSim, dut: GameOfLife) {
         println(gridToPrint)
     }
 
-    def checkGridOutput() {
+    def checkGridOutput():Unit = {
         for (r <- 0 until dut.nRows) {
             for (c <- 0 until dut.nCols) {
                 dut.io.gridOut(r)(c).expect(sim.g.cells(r)(c).B)
@@ -36,7 +35,7 @@ class GameOfLifeTestingCoSim(sim: GameOfLifeSim, dut: GameOfLife) {
         }
     }
 
-    def stepAndCheck(numSteps: Int=1) {
+    def stepAndCheck(numSteps: Int=1):Unit = {
         for (step <- 0 until numSteps) {
             dut.io.load.poke(false.B)
             dut.io.step.poke(true.B)

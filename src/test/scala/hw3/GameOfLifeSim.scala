@@ -15,7 +15,7 @@ class Grid(val nRows: Int, val nCols: Int) {
             }
             sb += '\n'
         }
-        sb.result
+        sb.result()
     }
 }
 
@@ -42,10 +42,11 @@ class GameOfLifeSim(initialGrid: Grid, rules: GameRules) {
     def nextGrid(): Grid = {
 
         // YOUR CODE HERE
-        
+        ???
+
     }
 
-    def evolve() = { g = nextGrid }
+    def evolve() = { g = nextGrid() }
 
     override def toString(): String = g.toString
     val nRows = g.nRows
