@@ -37,7 +37,7 @@ To get started, you will implement a Scala model of the game (`GameOfLifeSim`) w
 
 There are a few Scala details we want to point out. The `cells` are represented by a 2D array of `Boolean` using an `ArrayBuffer`. An ArrayBuffer is a `mutable` collection in Scala. We intend for you to write each cell only once (new rounds will generate a new Grid instance), but making them mutable allows you to fill them in a manner/order you find most convenient. Since we declared it as 2D, you can access row _i_ and column _j_ with `cells(i)(j)`. We use a `var` to hold the current grid within GameOfLifeSim so it can be overwritten for each round (in provided code for `evolve()`).
 
-To complete the Scala model, you will need to implement the `nextGrid` method within `GameOfLife`. We recommend breaking the problem into helper methods, and you might choose to place some of them inside of `Grid`. The first testcase in `GameOfListTester` executes only `GameOfLifeSim` (no Chisel) and compares its final output to a saved string.
+To complete the Scala model, you will need to implement the `nextGrid` method within `GameOfLifeSim`. We recommend breaking the problem into helper methods, and you might choose to place some of them inside of `Grid`. The first testcase in `GameOfListTester` executes only `GameOfLifeSim` (no Chisel) and compares its final output to a saved string.
 
 
 ### Part 2 - Chisel Generator (`GameOfLife`)
